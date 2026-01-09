@@ -51,6 +51,9 @@ RUN set -ex && \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Create X11 directory with proper permissions (before switching to non-root user)
+RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
+
 # Set ownership of the application directory
 RUN chown -R step:step /opt/step
 
