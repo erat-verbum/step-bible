@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: step_bible_docker
+    image: step_bible_docker_fixed
     container_name: stepbible
     ports:
       - "8989:8989"

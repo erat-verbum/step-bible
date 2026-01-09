@@ -63,5 +63,11 @@ USER step
 # Expose the application port
 EXPOSE 8989
 
+# Remove the Remote Address Filter from web.xml to allow external connections
+RUN if [ -f /opt/step/step-web/WEB-INF/web.xml ]; then \
+    sed -i '/<filter>/,/<\/filter>/ { /Remote Address Filter/ { :a; N; /<\/filter>/!ba; d; } }' /opt/step/step-web/WEB-INF/web.xml && \
+    sed -i '/<filter-mapping>/,/<\/filter-mapping>/ { /Remote Address Filter/ { :a; N; /<\/filter-mapping>/!ba; d; } }' /opt/step/step-web/WEB-INF/web.xml; \
+    fi
+
 # Set the entrypoint to run our startup script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
