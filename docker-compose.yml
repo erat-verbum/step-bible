@@ -1,0 +1,14 @@
+services:
+  stepbible:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: step_bible_docker
+    container_name: stepbible
+    ports:
+      - "8989:8989"
+    volumes:
+      - ${HOME}/.sword:/home/step/.sword
+    tty: true
+    stdin_open: true
+    restart: unless-stopped

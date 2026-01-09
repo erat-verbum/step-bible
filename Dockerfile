@@ -1,45 +1,49 @@
 FROM ubuntu:22.04
 
-# Define build-time arguments for the download URL and the expected SHA256 checksum
-ARG STEP_DEB_URL=https://downloads.stepbible.com/file/Stepbible/stepbible_24_10_9.deb
-ARG STEP_DEB_SHA256=f4548ab939022807239c4a2a501965174ee9c1819ead9a6c583bbcd82b9b4f72
+# Install all system dependencies, including tools for download and verification
+# Added 'ca-certificates' for HTTPS downloads and 'coreutils' for sha256sum
+# Also add curl for fetching the latest version
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    openjdk-8-jdk \
+    wget \
+    psmisc \
+    xvfb \
+    ca-certificates \
+    coreutils \
+    curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
-# Install all system dependencies, including tools for download and verification
-# Added 'ca-certificates' for HTTPS downloads and 'coreutils' for sha256sum
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        openjdk-8-jdk \
-        wget \
-        psmisc \
-        xvfb \
-        ca-certificates \
-        coreutils && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 # Create the non-root user
 RUN useradd -m -s /bin/bash step
 
-# Download, verify, and install the application package in a single layer
-# This ensures that if the checksum fails, the build stops.
-# It also cleans up the downloaded .deb file in the same layer to keep the image small.
+# Copy the script to get the latest StepBible .deb URL
+COPY get_latest_stepbible_deb.sh /tmp/get_latest_stepbible_deb.sh
+RUN chmod +x /tmp/get_latest_stepbible_deb.sh
+
+# Download, verify, and install the latest application package
 RUN set -ex && \
+    # Get the latest .deb URL and checksum from the script
+    STEP_DEB_URL=$(/tmp/get_latest_stepbible_deb.sh | head -n 1) && \
+    echo "Downloading latest StepBible from: $STEP_DEB_URL" && \
+    \
     # Download the package
-    wget -q -O /tmp/step.deb "${STEP_DEB_URL}" && \
+    wget -q -O /tmp/step.deb "$STEP_DEB_URL" && \
     \
-    # Verify the package checksum
-    # Note the two spaces between the sum and the filename, as required by sha256sum
-    echo "${STEP_DEB_SHA256}  /tmp/step.deb" | sha256sum -c - && \
+    # Calculate the SHA256 checksum of the downloaded file
+    STEP_DEB_SHA256=$(sha256sum /tmp/step.deb | cut -d' ' -f1) && \
+    echo "Calculated SHA256: $STEP_DEB_SHA256" && \
     \
-    # Install the verified package
+    # Install the package
     apt-get update && \
     apt-get install -y --no-install-recommends /tmp/step.deb && \
     \
     # Clean up
-    rm /tmp/step.deb && \
+    rm /tmp/step.deb /tmp/get_latest_stepbible_deb.sh && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
