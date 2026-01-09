@@ -68,3 +68,7 @@ Once the container is running, you can access the StepBible application by navig
 - Ensure your local `.sword` directory exists before running the container to avoid permission issues.
 - The application will be accessible on port `8989` by default.
 - The container runs as a non-root user (`step`) for security purposes.
+
+## Acknowledgements
+
+This repository builds on the work by [PJonathas](https://github.com/PJonathas) from the original [StepBibleDocker](https://github.com/PJonathas/StepBibleDocker) project.
