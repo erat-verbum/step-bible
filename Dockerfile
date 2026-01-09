@@ -65,8 +65,28 @@ EXPOSE 8989
 
 # Remove the Remote Address Filter from web.xml to allow external connections
 RUN if [ -f /opt/step/step-web/WEB-INF/web.xml ]; then \
+    echo "=== Original web.xml content (before modification) ===" && \
+    cp /opt/step/step-web/WEB-INF/web.xml /opt/step/step-web/WEB-INF/web.xml.backup && \
+    echo "Backup created at /opt/step/step-web/WEB-INF/web.xml.backup" && \
+    echo "=== Attempting to remove Remote Address Filter ===" && \
     sed -i '/<filter>/,/<\/filter>/ { /Remote Address Filter/ { :a; N; /<\/filter>/!ba; d; } }' /opt/step/step-web/WEB-INF/web.xml && \
-    sed -i '/<filter-mapping>/,/<\/filter-mapping>/ { /Remote Address Filter/ { :a; N; /<\/filter-mapping>/!ba; d; } }' /opt/step/step-web/WEB-INF/web.xml; \
+    sed -i '/<filter-mapping>/,/<\/filter-mapping>/ { /Remote Address Filter/ { :a; N; /<\/filter-mapping>/!ba; d; } }' /opt/step/step-web/WEB-INF/web.xml && \
+    echo "=== Modified web.xml content (after removing Remote Address Filter) ===" && \
+    grep -A 5 -B 5 "Remote Address Filter" /opt/step/step-web/WEB-INF/web.xml || echo "Remote Address Filter successfully removed" && \    
+    echo "=== Checking for any remaining filter configurations ===" && \
+    grep -n "filter" /opt/step/step-web/WEB-INF/web.xml | head -10; \
+    else \
+    echo "ERROR: web.xml file not found at /opt/step/step-web/WEB-INF/web.xml"; \
+    fi
+
+# Deploy the web application to Tomcat webapps directory
+RUN if [ -d /opt/step/webapps ] && [ -d /opt/step/step-web ]; then \
+    echo "=== Deploying STEP web application ===" && \
+    ln -sf /opt/step/step-web /opt/step/webapps/ROOT && \
+    echo "Web application deployed: /opt/step/webapps/ROOT -> /opt/step/step-web" && \
+    ls -la /opt/step/webapps/; \
+    else \
+    echo "ERROR: Cannot deploy web application - directories not found"; \
     fi
 
 # Set the entrypoint to run our startup script

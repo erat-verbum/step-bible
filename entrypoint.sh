@@ -25,6 +25,24 @@ ip addr
 echo "Listening ports before starting app:"
 netstat -tlnp 2>/dev/null || ss -tlnp 2>/dev/null || echo "No netstat/ss available"
 
+echo "=== Checking web.xml configuration ==="
+if [ -f /opt/step/step-web/WEB-INF/web.xml ]; then
+    echo "web.xml found, checking for Remote Address Filter:"
+    grep -n "Remote Address Filter" /opt/step/step-web/WEB-INF/web.xml || echo "No Remote Address Filter found (good)"
+    echo "Checking for any filter configurations:"
+    grep -n "<filter>" /opt/step/step-web/WEB-INF/web.xml | head -5
+else
+    echo "ERROR: web.xml not found at /opt/step/step-web/WEB-INF/web.xml"
+fi
+
+echo "=== Checking application properties ==="
+if [ -f /opt/step/step-web/WEB-INF/classes/step.properties ]; then
+    echo "step.properties found, showing relevant network settings:"
+    grep -E "(port|host|bind|address)" /opt/step/step-web/WEB-INF/classes/step.properties || echo "No network-related properties found"
+else
+    echo "No step.properties file found"
+fi
+
 # Start the application in the foreground with additional Java options
 # Using exec to make it the main process (Docker best practice)
 # Add Java options to force binding to all interfaces and show port info
