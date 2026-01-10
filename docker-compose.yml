@@ -9,8 +9,6 @@ services:
       - stepbible_bridge
     volumes:
       - ./data:/home/step/.sword
-      - ./web.xml.network:/opt/stepbible/webapps/ROOT/WEB-INF/web.xml
-      - ./step.web.properties.network:/opt/stepbible/step.web.properties
     environment:
       - DISPLAY=${DISPLAY}
       - JAVA_OPTS=-Dapp.desktop=true -Dstep.desktop=true -Dstep.jetty=true -Djava.net.preferIPv4Stack=true

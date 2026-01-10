@@ -46,11 +46,11 @@ COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy the modified web.xml to allow network access
-COPY web.xml.network /opt/step/step.war/WEB-INF/web.xml
-COPY web.xml.network /opt/step/step-web/WEB-INF/web.xml
+COPY config/web.xml.network /opt/step/step.war/WEB-INF/web.xml
+COPY config/web.xml.network /opt/step/step-web/WEB-INF/web.xml
 
 # Copy the modified properties file to force desktop mode (bypass server security)
-COPY step.web.properties.network /opt/step/step-web/WEB-INF/classes/step.web.properties
+COPY config/step.web.properties.network /opt/step/step-web/WEB-INF/classes/step.web.properties
 
 # Create X11 directory with proper permissions (before switching to non-root user)
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
