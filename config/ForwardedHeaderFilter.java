@@ -3,6 +3,8 @@ package com.tyndalehouse.step.web;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
@@ -23,12 +25,54 @@ public class ForwardedHeaderFilter implements Filter {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             request = new ForwardedHeaderRequest(httpRequest);
         }
+        
+        if (response instanceof HttpServletResponse) {
+            response = new MimeTypeResponseWrapper((HttpServletResponse) response);
+        }
 
         chain.doFilter(request, response);
     }
 
     public void destroy() {
         // No cleanup needed
+    }
+
+    private static class MimeTypeResponseWrapper extends HttpServletResponseWrapper {
+        public MimeTypeResponseWrapper(HttpServletResponse response) {
+            super(response);
+        }
+
+        @Override
+        public void setContentType(String type) {
+            if (type != null && (type.startsWith("text/js") || type.startsWith("text/javascript"))) {
+                // Force standard application/javascript MIME type
+                String charset = "";
+                if (type.contains("charset=")) {
+                    charset = type.substring(type.indexOf("charset="));
+                }
+                super.setContentType("application/javascript" + (charset.isEmpty() ? "" : "; " + charset));
+            } else {
+                super.setContentType(type);
+            }
+        }
+
+        @Override
+        public void setHeader(String name, String value) {
+            if ("Content-Type".equalsIgnoreCase(name)) {
+                setContentType(value);
+            } else {
+                super.setHeader(name, value);
+            }
+        }
+
+        @Override
+        public void addHeader(String name, String value) {
+            if ("Content-Type".equalsIgnoreCase(name)) {
+                setContentType(value);
+            } else {
+                super.addHeader(name, value);
+            }
+        }
     }
 
     private static class ForwardedHeaderRequest extends HttpServletRequestWrapper {

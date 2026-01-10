@@ -68,6 +68,37 @@ A Docker setup for running STEP Bible, a graphical Bible study application, in a
 - **Remote**: `http://<host-ip>:8989`
 - **From other containers**: `http://stepbible:8989`
 
+## Reverse Proxy Configuration (Nginx)
+
+When running STEP Bible behind an Nginx reverse proxy (like SWAG), you must ensure that forwarded headers are correctly set and that the non-standard MIME types used by the application are handled.
+
+Add the following to your Nginx location block:
+
+```nginx
+location / {
+    # Standard proxy settings
+    include /config/nginx/proxy.conf;
+    include /config/nginx/resolver.conf;
+    set $upstream_app stepbible;
+    set $upstream_port 8989;
+    set $upstream_proto http;
+    proxy_pass $upstream_proto://$upstream_app:$upstream_port;
+
+    # FIX: Override the incorrect 'text/js' MIME type from the backend
+    # This is required for modern browsers to execute the localization scripts
+    proxy_hide_header Content-Type;
+    add_header Content-Type $upstream_http_content_type;
+    if ($request_uri ~* \.js$) {
+        add_header Content-Type "application/javascript; charset=UTF-8" always;
+    }
+
+    # Required headers for STEP Bible
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_set_header Accept-Encoding "";
+    proxy_buffering off;
+}
+```
+
 ## Notes
 
 - Ensure `${HOME}/.sword` exists to avoid permission issues.
