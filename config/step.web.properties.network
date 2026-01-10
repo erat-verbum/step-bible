@@ -7,5 +7,10 @@ app.ui.defaults.2.reference=Gen 1
 # FORCE DESKTOP MODE TO BYPASS SERVER SECURITY RESTRICTIONS
 app.desktop=true
 
+# Configure base URL for reverse proxy compatibility
+# Leave empty to auto-detect from forwarded headers
+app.baseUrl=
+app.server.url=
+
 app.images.localSource=D:/temp/imagemodule
 app.images.remoteSource=http://step.tyndalehouse.com/static/commentary/

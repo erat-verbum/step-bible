@@ -50,6 +50,12 @@ COPY config/web.xml.network /opt/step/step-web/WEB-INF/web.xml
 # Copy the modified properties file to force desktop mode (bypass server security)
 COPY config/step.web.properties.network /opt/step/step-web/WEB-INF/classes/step.web.properties
 
+# Compile and install the forwarded header filter
+COPY config/ForwardedHeaderFilter.java /tmp/ForwardedHeaderFilter.java
+RUN mkdir -p /opt/step/step-web/WEB-INF/classes/com/tyndalehouse/step/web && \
+    javac -cp /opt/step/step-web/WEB-INF/lib/*:/opt/step/step.war/WEB-INF/lib/*:/opt/step/lib/tomcat-servlet-api-8.5.99.jar /tmp/ForwardedHeaderFilter.java -d /opt/step/step-web/WEB-INF/classes && \
+    rm /tmp/ForwardedHeaderFilter.java
+
 # Create X11 directory with proper permissions (before switching to non-root user)
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
