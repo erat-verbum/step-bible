@@ -1,10 +1,10 @@
-[![StepBible Logo](https://www.stepbible.org/step.png)](https://www.stepbible.org/)
+[![STEP Bible Logo](https://www.stepbible.org/step.png)](https://www.stepbible.org/)
 
-StepBible is a free Bible study software for Windows, Mac, and Linux. It provides powerful search and study tools, including Greek/Hebrew lexicons, interlinear Bibles, and support for multiple languages and versions.
+STEP Bible is a free Bible study software for Windows, Mac, and Linux. It provides powerful search and study tools, including Greek/Hebrew lexicons, interlinear Bibles, and support for multiple languages and versions.
 
-# StepBible Docker
+# STEP Bible Docker
 
-A Docker setup for running StepBible, a graphical Bible study application, in a containerized environment with virtual display support for headless operation.
+A Docker setup for running STEP Bible, a graphical Bible study application, in a containerized environment with virtual display support for headless operation.
 
 ## Prerequisites
 
@@ -16,20 +16,23 @@ A Docker setup for running StepBible, a graphical Bible study application, in a 
 1. **Clone or download** this repository.
 
 2. **Build the image**:
+
    ```bash
    docker-compose build
    ```
 
 3. **Run the container**:
+
    ```bash
    docker-compose up -d
    ```
 
-4. **Access StepBible** at `http://localhost:8989`.
+4. **Access STEP Bible** at `http://localhost:8989`.
 
 ## Manual Commands
 
 ### Building
+
 - **Docker Compose**:
   ```bash
   docker-compose build
@@ -40,6 +43,7 @@ A Docker setup for running StepBible, a graphical Bible study application, in a 
   ```
 
 ### Running
+
 - **Docker Compose**:
   ```bash
   docker-compose up -d  # Start
@@ -52,7 +56,7 @@ A Docker setup for running StepBible, a graphical Bible study application, in a 
 
 ## Features
 
-- **Automatic Download**: Downloads the latest StepBible version from the official site.
+- **Automatic Download**: Downloads the latest STEP Bible version from the official site.
 - **Virtual Display**: Uses Xvfb for graphical rendering in headless environments.
 - **Persistent Storage**: Mounts local `.sword` directory for Bible modules.
 - **Secure**: Runs as non-root user.
@@ -74,4 +78,4 @@ A Docker setup for running StepBible, a graphical Bible study application, in a 
 
 Official STEP repository: [STEPBible/step](https://github.com/STEPBible/step)
 
-Based on the work by [PJonathas](https://github.com/PJonathas/StepBibleDocker).
+Based on the work by [PJonathas](https://github.com/PJonathas/STEP BibleDocker).
