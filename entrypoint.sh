@@ -23,5 +23,9 @@ chmod -R 777 /home/step/.sword
 # Using exec to make it the main process (Docker best practice)
 # Set step.jetty=true to force desktop mode and bypass server security restrictions
 echo "Starting STEP application..."
-export JAVA_OPTS="-Dstep.jetty=true"
+
+# Export Java options using the proper INSTALL4J_ADD_VM_PARAMS method
+export INSTALL4J_ADD_VM_PARAMS="-Dstep.jetty=true -Dapp.desktop=true -Dstep.desktop=true"
+
+# Start the application
 exec /opt/step/step-install4j
