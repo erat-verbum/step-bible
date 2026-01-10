@@ -49,6 +49,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy the modified web.xml to allow network access
 COPY web.xml.network /opt/step/step.war/WEB-INF/web.xml
+COPY web.xml.network /opt/step/step-web/WEB-INF/web.xml
 
 # Copy the modified properties file to force desktop mode (bypass server security)
 COPY step.web.properties.network /opt/step/step-web/WEB-INF/classes/step.web.properties

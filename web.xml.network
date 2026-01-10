@@ -21,24 +21,7 @@
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 
-	<!-- The following are used for the stand-alone version of STEP -->
-	<!-- The stand-alone version of STEP should only support the users' -->
-	<!-- own computer.  Therefore, it should only allow the localhost address -->
-	<!-- The following lines will be uncommented by the maven process when -->
-	<!-- the "-Pstandalone-install" parameter is used in the mvn command. -->
 	<!-- REMOTE ADDRESS FILTER REMOVED FOR DOCKER NETWORK ACCESS -->
-	<!-- <filter> 
-		<filter-name>Remote Address Filter</filter-name> 
-		<filter-class>org.apache.catalina.filters.RemoteAddrFilter</filter-class> 
-		<init-param> 
-			<param-name>allow</param-name> 
-			<param-value>127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1</param-value> 
-		</init-param> 
-	</filter> 
-	<filter-mapping> 
-		<filter-name>Remote Address Filter</filter-name> 
-		<url-pattern>*</url-pattern> 
-	</filter-mapping> -->
 
 	<filter>
 		<filter-name>guiceFilter</filter-name>
@@ -55,21 +38,10 @@
 		<listener-class>com.tyndalehouse.step.guice.StepServletConfig</listener-class>
 	</listener>
 
-	<!--<listener>-->
-		<!--<listener-class>com.yammer.metrics.reporting.MetricsServletContextListener</listener-class>-->
-	<!--</listener>-->
-
-
 	<welcome-file-list>
 		<welcome-file>/</welcome-file>
 	</welcome-file-list>
     <absolute-ordering />
-
-<!--
-Automatically created by Apache Tomcat JspC.
-Place this fragment in the web.xml before all icon, display-name,
-description, distributable, and context-param elements.
--->
 
     <servlet>
         <servlet-name>jsp.shutdown_jsp</servlet-name>
@@ -230,11 +202,5 @@ description, distributable, and context-param elements.
         <servlet-name>jsp.snapshots.definition_jsp</servlet-name>
         <url-pattern>/snapshots/definition.jsp</url-pattern>
     </servlet-mapping>
-
-<!--
-All session-config, mime-mapping, welcome-file-list, error-page, taglib,
-resource-ref, security-constraint, login-config, security-role,
-env-entry, and ejb-ref elements should follow this fragment.
--->
 
 </web-app>

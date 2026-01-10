@@ -62,6 +62,9 @@ Once the container is running, you can access the StepBible application by navig
 
 - **Local Access**: `http://localhost:8989`
 - **Remote Access**: Replace `localhost` with the IP address of the host machine where the container is running.
+- **Docker Bridge Network Access**: From other containers on the same Docker bridge network, use `http://stepbible:8989`
+
+The application is now fully accessible over the Docker bridge network without 403 Forbidden errors, allowing other containers to communicate with it directly.
 
 ## Notes
 

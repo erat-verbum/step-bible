@@ -5,13 +5,22 @@ services:
       dockerfile: Dockerfile
     image: stepbible
     container_name: stepbible
-    network_mode: host
+    networks:
+      - stepbible_bridge
     volumes:
       - ./data:/home/step/.sword
       - ./web.xml.network:/opt/stepbible/webapps/ROOT/WEB-INF/web.xml
       - ./step.web.properties.network:/opt/stepbible/step.web.properties
     environment:
       - DISPLAY=${DISPLAY}
+      - JAVA_OPTS=-Dapp.desktop=true -Dstep.desktop=true -Dstep.jetty=true -Djava.net.preferIPv4Stack=true
     tty: true
     stdin_open: true
     restart: unless-stopped
+    ports:
+      - "8989:8989"
+
+
+networks:
+  stepbible_bridge:
+    driver: bridge
