@@ -72,4 +72,6 @@ A Docker setup for running StepBible, a graphical Bible study application, in a 
 
 ## Acknowledgements
 
+Official STEP repository: [STEPBible/step](https://github.com/STEPBible/step)
+
 Based on the work by [PJonathas](https://github.com/PJonathas/StepBibleDocker).
