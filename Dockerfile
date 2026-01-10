@@ -22,19 +22,17 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 RUN useradd -m -s /bin/bash step
 
 # Copy the script to get the latest StepBible .deb URL
-COPY get_latest_stepbible_deb.sh /tmp/get_latest_stepbible_deb.sh
+COPY scripts/get_latest_stepbible_deb.sh /tmp/get_latest_stepbible_deb.sh
 RUN chmod +x /tmp/get_latest_stepbible_deb.sh
 
-# Download, verify, and install the application package
-# Using a known-good version with checksum verification
+# Download and install the latest application package
 RUN set -ex && \
+    # Get the latest deb URL
+    DEB_URL=$(/tmp/get_latest_stepbible_deb.sh) && \
     # Download the package
-    wget -q -O /tmp/step.deb "https://downloads.stepbible.com/file/Stepbible/stepbible_25_11_15.deb" && \
+    wget -q -O /tmp/step.deb "$DEB_URL" && \
     \
-    # Verify the package checksum
-    echo "7b8411f3d5c214c0de43575063f6f7ad2ce0e38aa0cb6f42d40cf845241a51c6  /tmp/step.deb" | sha256sum -c - && \
-    \
-    # Install the verified package
+    # Install the package
     apt-get update && \
     apt-get install -y --no-install-recommends /tmp/step.deb && \
     \
@@ -44,7 +42,7 @@ RUN set -ex && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the entrypoint script and make it executable
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy the modified web.xml to allow network access
