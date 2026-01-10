@@ -125,4 +125,4 @@ To update the version of STEP Bible used in this Docker image:
 
 Official STEP repository: [STEPBible/step](https://github.com/STEPBible/step)
 
-Based on the work by [PJonathas](https://github.com/PJonathas/STEP BibleDocker).
+Based on the work by [PJonathas](https://github.com/PJonathas/StepBibleDocker).
