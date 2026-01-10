@@ -2,14 +2,12 @@ FROM ubuntu:22.04
 
 # Install all system dependencies, including tools for download and verification
 # Added 'ca-certificates' for HTTPS downloads
-# Also add curl for fetching the latest version
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     openjdk-8-jdk \
     wget \
     xvfb \
-    ca-certificates \
-    curl && \
+    ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -19,16 +17,19 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 # Create the non-root user
 RUN useradd -m -s /bin/bash step
 
-# Copy the script to get the latest StepBible .deb URL
-COPY scripts/get_latest_stepbible_deb.sh /tmp/get_latest_stepbible_deb.sh
-RUN chmod +x /tmp/get_latest_stepbible_deb.sh
+# Define the version and hash of StepBible to use
+ARG STEP_VERSION=25_11_15
+ARG STEP_HASH=7b8411f3d5c214c0de43575063f6f7ad2ce0e38aa0cb6f42d40cf845241a51c6
 
-# Download and install the latest application package
+# Download and install the application package
 RUN set -ex && \
-    # Get the latest deb URL
-    DEB_URL=$(/tmp/get_latest_stepbible_deb.sh) && \
+    # Construct the download URL
+    DEB_URL="https://downloads.stepbible.com/file/Stepbible/stepbible_${STEP_VERSION}.deb" && \
     # Download the package
     wget -q -O /tmp/step.deb "$DEB_URL" && \
+    \
+    # Verify the package hash
+    echo "${STEP_HASH} /tmp/step.deb" | sha256sum -c - && \
     \
     # Install the package
     apt-get update && \

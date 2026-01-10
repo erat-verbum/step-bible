@@ -56,7 +56,7 @@ A Docker setup for running STEP Bible, a graphical Bible study application, in a
 
 ## Features
 
-- **Automatic Download**: Downloads the latest STEP Bible version from the official site.
+- **Predefined Version**: Uses a specific, tested version of STEP Bible with hash verification (defined in the Dockerfile).
 - **Virtual Display**: Uses Xvfb for graphical rendering in headless environments.
 - **Persistent Storage**: Mounts local `.sword` directory for Bible modules.
 - **Secure**: Runs as non-root user.
@@ -98,6 +98,22 @@ location / {
     proxy_buffering off;
 }
 ```
+
+## Updating STEP Bible
+
+To update the version of STEP Bible used in this Docker image:
+
+1.  **Run the update script** to find the latest version and its SHA256 hash:
+    ```bash
+    bash scripts/get_latest_stepbible_deb.sh
+    ```
+
+2.  **Update the `Dockerfile`** with the new values for `STEP_VERSION` and `STEP_HASH`.
+
+3.  **Rebuild the image**:
+    ```bash
+    docker-compose build --no-cache
+    ```
 
 ## Notes
 
