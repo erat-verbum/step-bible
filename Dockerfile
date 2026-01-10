@@ -1,16 +1,14 @@
 FROM ubuntu:22.04
 
 # Install all system dependencies, including tools for download and verification
-# Added 'ca-certificates' for HTTPS downloads and 'coreutils' for sha256sum
+# Added 'ca-certificates' for HTTPS downloads
 # Also add curl for fetching the latest version
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     openjdk-8-jdk \
     wget \
-    psmisc \
     xvfb \
     ca-certificates \
-    coreutils \
     curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
