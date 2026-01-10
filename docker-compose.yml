@@ -3,12 +3,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: step_bible_docker_fixed
+    image: stepbible
     container_name: stepbible
-    ports:
-      - "8989:8989"
+    network_mode: host
     volumes:
       - ./data:/home/step/.sword
+      - ./web.xml.network:/opt/stepbible/webapps/ROOT/WEB-INF/web.xml
+      - ./step.web.properties.network:/opt/stepbible/step.web.properties
+    environment:
+      - DISPLAY=${DISPLAY}
     tty: true
     stdin_open: true
     restart: unless-stopped

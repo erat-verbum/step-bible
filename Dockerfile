@@ -25,31 +25,33 @@ RUN useradd -m -s /bin/bash step
 COPY get_latest_stepbible_deb.sh /tmp/get_latest_stepbible_deb.sh
 RUN chmod +x /tmp/get_latest_stepbible_deb.sh
 
-# Download, verify, and install the latest application package
+# Download, verify, and install the application package
+# Using a known-good version with checksum verification
 RUN set -ex && \
-    # Get the latest .deb URL and checksum from the script
-    STEP_DEB_URL=$(/tmp/get_latest_stepbible_deb.sh | head -n 1) && \
-    echo "Downloading latest StepBible from: $STEP_DEB_URL" && \
-    \
     # Download the package
-    wget -q -O /tmp/step.deb "$STEP_DEB_URL" && \
+    wget -q -O /tmp/step.deb "https://downloads.stepbible.com/file/Stepbible/stepbible_25_11_15.deb" && \
     \
-    # Calculate the SHA256 checksum of the downloaded file
-    STEP_DEB_SHA256=$(sha256sum /tmp/step.deb | cut -d' ' -f1) && \
-    echo "Calculated SHA256: $STEP_DEB_SHA256" && \
+    # Verify the package checksum
+    echo "7b8411f3d5c214c0de43575063f6f7ad2ce0e38aa0cb6f42d40cf845241a51c6  /tmp/step.deb" | sha256sum -c - && \
     \
-    # Install the package
+    # Install the verified package
     apt-get update && \
     apt-get install -y --no-install-recommends /tmp/step.deb && \
     \
     # Clean up
-    rm /tmp/step.deb /tmp/get_latest_stepbible_deb.sh && \
+    rm /tmp/step.deb && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the entrypoint script and make it executable
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Copy the modified web.xml to allow network access
+COPY web.xml.network /opt/step/step.war/WEB-INF/web.xml
+
+# Copy the modified properties file to force desktop mode (bypass server security)
+COPY step.web.properties.network /opt/step/step-web/WEB-INF/classes/step.web.properties
 
 # Create X11 directory with proper permissions (before switching to non-root user)
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
@@ -63,31 +65,8 @@ USER step
 # Expose the application port
 EXPOSE 8989
 
-# Remove the Remote Address Filter from web.xml to allow external connections
-RUN if [ -f /opt/step/step-web/WEB-INF/web.xml ]; then \
-    echo "=== Original web.xml content (before modification) ===" && \
-    cp /opt/step/step-web/WEB-INF/web.xml /opt/step/step-web/WEB-INF/web.xml.backup && \
-    echo "Backup created at /opt/step/step-web/WEB-INF/web.xml.backup" && \
-    echo "=== Attempting to remove Remote Address Filter ===" && \
-    sed -i '/<filter>/,/<\/filter>/ { /Remote Address Filter/ { :a; N; /<\/filter>/!ba; d; } }' /opt/step/step-web/WEB-INF/web.xml && \
-    sed -i '/<filter-mapping>/,/<\/filter-mapping>/ { /Remote Address Filter/ { :a; N; /<\/filter-mapping>/!ba; d; } }' /opt/step/step-web/WEB-INF/web.xml && \
-    echo "=== Modified web.xml content (after removing Remote Address Filter) ===" && \
-    grep -A 5 -B 5 "Remote Address Filter" /opt/step/step-web/WEB-INF/web.xml || echo "Remote Address Filter successfully removed" && \    
-    echo "=== Checking for any remaining filter configurations ===" && \
-    grep -n "filter" /opt/step/step-web/WEB-INF/web.xml | head -10; \
-    else \
-    echo "ERROR: web.xml file not found at /opt/step/step-web/WEB-INF/web.xml"; \
-    fi
-
-# Deploy the web application to Tomcat webapps directory
-RUN if [ -d /opt/step/webapps ] && [ -d /opt/step/step-web ]; then \
-    echo "=== Deploying STEP web application ===" && \
-    ln -sf /opt/step/step-web /opt/step/webapps/ROOT && \
-    echo "Web application deployed: /opt/step/webapps/ROOT -> /opt/step/step-web" && \
-    ls -la /opt/step/webapps/; \
-    else \
-    echo "ERROR: Cannot deploy web application - directories not found"; \
-    fi
+# Note: Using embedded Tomcat, no need for manual web.xml modifications
+# or symbolic link creation. The application handles deployment internally.
 
 # Set the entrypoint to run our startup script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
