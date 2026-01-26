@@ -18,8 +18,8 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 RUN useradd -m -s /bin/bash step
 
 # Define the version and hash of StepBible to use
-ARG STEP_VERSION=25_11_15
-ARG STEP_HASH=7b8411f3d5c214c0de43575063f6f7ad2ce0e38aa0cb6f42d40cf845241a51c6
+ARG STEP_VERSION=26_1_2
+ARG STEP_HASH=619ebcef68c40fd0199ebefbefa499fa5c8ba7ca6692bc2103d9b62994e0f37d
 
 # Download and install the application package
 RUN set -ex && \
