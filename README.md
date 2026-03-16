@@ -11,6 +11,17 @@ A Docker setup for running STEP Bible, a graphical Bible study application, in a
 - Docker
 - Docker Compose (recommended)
 
+## Using the Pre-built Image
+
+A pre-built Docker image is automatically published to [GitHub Container Registry](https://ghcr.io) when a new version is released.
+
+```bash
+docker pull ghcr.io/erat-verbum/step-bible:latest
+docker run -it --rm -p 8989:8989 -v ${HOME}/.sword:/home/step/.sword ghcr.io/erat-verbum/step-bible:latest
+```
+
+Replace `erat-verbum` with the repository owner.
+
 ## Quick Start
 
 1. **Clone or download** this repository.
